@@ -16,6 +16,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 class BeaconUtils {
+  
+  static String distanceToProximity(int rssi, double distance) {
+    if (rssi == 0) {
+      return "unknown";
+    }
+
+    if (distance < 1.0) {
+      return "immediate";
+    }
+
+    if (distance < 3.0) {
+      return "near";
+    }
+
+    return "far";
+  }
+
   static WritableArray beaconsToArray(List<Beacon> beacons) {
     if (beacons == null) {
       return new WritableNativeArray();
