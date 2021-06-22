@@ -77,5 +77,5 @@ class BeaconUtils {
 
     return new Region(identifier, identifiers);
   }
-}
+
 };
