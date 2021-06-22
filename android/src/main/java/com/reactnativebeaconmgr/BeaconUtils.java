@@ -48,4 +48,34 @@ class BeaconUtils {
 
     return map;
   }
+
+  static Region regionFromMap(ReadableMap map) {
+    String identifier = "";
+    List<Identifier> identifiers = new ArrayList<>();
+
+    if (map.getType("identifier") == ReadableType.String) {
+      String id = map.getString("identifier");
+      if (id != null) {
+        identifier = id;
+      }
+    }
+
+    if (map.hasKey("uuid") && map.getType("uuid") == ReadableType.String) {
+      String uuid = map.getString("uuid");
+      if (uuid != null) {
+        identifiers.add(Identifier.parse(uuid));
+      }
+    }
+
+    if (map.hasKey("major") && map.getType("major") == ReadableType.Number) {
+      identifiers.add(Identifier.fromInt(map.getInt("major")));
+    }
+
+    if (map.hasKey("minor") && map.getType("minor") == ReadableType.Number) {
+      identifiers.add(Identifier.fromInt(map.getInt("minor")));
+    }
+
+    return new Region(identifier, identifiers);
+  }
+}
 };
