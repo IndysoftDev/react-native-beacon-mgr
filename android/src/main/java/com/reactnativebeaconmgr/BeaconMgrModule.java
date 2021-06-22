@@ -5,6 +5,9 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import android.os.RemoteException;
+
+import java.util.Collection;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -13,6 +16,8 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableNativeArray;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -28,7 +33,7 @@ import org.altbeacon.beacon.service.RunningAverageRssiFilter;
 
 
 @ReactModule(name = BeaconMgrModule.NAME)
-public class BeaconMgrModule extends ReactContextBaseJavaModule implements BeaconConsumer{
+public class BeaconMgrModule extends ReactContextBaseJavaModule {
     public static final String NAME = "BeaconMgr";
     private BeaconManager mBeaconManager;
     private Context mApplicationContext;
@@ -44,14 +49,12 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule implements Beaco
     @NonNull
     public String getName() {
         return NAME;
-    }
+    }     
 
-    private void sendEvent(String eventName, @Nullable WritableMap params) {
-        if (mReactContext.hasActiveCatalystInstance()) {
-            mReactContext
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(eventName, params);
-        }
+    private void sendEvent(String eventName, @Nullable WritableArray array) {
+        getReactApplicationContext()
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, array);
     }
 
    
@@ -76,5 +79,25 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule implements Beaco
     public void setHardwareEqualityEnforced(Boolean e) {
         Beacon.setHardwareEqualityEnforced(e.booleanValue());
     }
+
+    //  @Override
+    // public void onBeaconServiceConnect() {
+
+    //     RangeNotifier rangeNotifier = new RangeNotifier() {
+    //        @Override
+    //        public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+    //         if (beacons.size() > 0) {
+    //             Log.d(NAME, "rangingConsumer didRangeBeaconsInRegion, beacons: " + beacons.toString());
+    //             Log.d(NAME, "rangingConsumer didRangeBeaconsInRegion, region: " + region.toString());
+    //             sendEvent(mReactContext, "beaconsDidRange", createRangingResponse(beacons, region));
+    //         }
+    //        }
+
+    //     };
+    //     try {
+    //         mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
+    //         mBeaconManager.addRangeNotifier(rangeNotifier);
+    //     } catch (RemoteException e) {   }
+    // }
 
 }
