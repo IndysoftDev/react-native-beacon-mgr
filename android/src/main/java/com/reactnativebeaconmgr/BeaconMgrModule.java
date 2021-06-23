@@ -1,7 +1,10 @@
 package com.reactnativebeaconmgr;
 
 import android.util.Log;
+
 import android.content.Context;
+import android.content.ServiceConnection;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,16 +64,10 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
     }
 
     //SEND EVENT FUNCS
-    private void sendEvent(String eventName, @Nullable WritableArray array) {
+    private void sendEvent(String eventName, @Nullable WritableMap map) {
         getReactApplicationContext()
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-            .emit(eventName, array);
-    }
-
-    private void sendEvent(String eventName, @Nullable String string) {
-        getReactApplicationContext()
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-            .emit(eventName, string);
+            .emit(eventName, map);
     }
 
     //EXAMPLE METHOD, DELETE AFTER DEV
@@ -90,7 +87,7 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
 
         @Override
         public Context getApplicationContext() {
-            return reactContext.getApplicationContext();
+            return mReactContext.getApplicationContext();
         }
 
         @Override
