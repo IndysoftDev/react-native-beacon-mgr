@@ -21,6 +21,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
@@ -129,6 +130,27 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
 
         mBeaconManager.removeAllRangeNotifiers();
         mBeaconManager.addRangeNotifier(rangeNotifier);
+    }
+
+    //region RANGING
+    private void startRanging(ReadableMap map) throws RemoteException {
+        Region region = BeaconUtils.regionFromMap(map);
+        if (regionRanging.indexOf(region) != -1) {
+            Log.d(NAME, "Already ranged region: " + region);
+            return;
+        }
+
+        mBeaconManager.startRangingBeaconsInRegion(region);
+        regionRanging.add(region);
+    }
+
+    @ReactMethod
+    public void startRangingBeaconsInRegion(ReadableMap map) {
+        try {
+            startRanging(map);
+        } catch (RemoteException e) {
+            Log.e(NAME, e.getLocalizedMessage());
+        }
     }
 
     
