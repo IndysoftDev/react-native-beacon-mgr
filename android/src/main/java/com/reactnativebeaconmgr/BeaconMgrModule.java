@@ -23,6 +23,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -47,6 +48,7 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
 
     //EVENT CONSTANTS
     private static final String ON_BEACON_SERVICE_CONNECT = "onBeaconServiceConnect";
+    private static final String DID_RANGE_BEACONS = "didRangeBeacons";
 
     @Override
     @NonNull
@@ -100,6 +102,16 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
             return mReactContext.bindService(intent, serviceConnection, i);
         }
 
+    };
+
+    private final RangeNotifier rangeNotifier = new RangeNotifier() {
+        @Override
+        public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
+            WritableMap map = new WritableNativeMap();
+            map.putMap("region", BeaconUtils.regionToMap(region));
+            map.putArray("beacons", BeaconUtils.beaconsToArray(new ArrayList<>(collection)));
+            sendEvent(DID_RANGE_BEACONS, map);
+        }
     };
 
     
