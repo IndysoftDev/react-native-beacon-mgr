@@ -1,4 +1,4 @@
-package com.cubeacon;
+package com.reactnativebeaconmgr;
 
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
@@ -66,33 +66,22 @@ class BeaconUtils {
     return map;
   }
 
-  static Region regionToMap(ReadableMap map) {
-    String identifier = "";
-    List<Identifier> identifiers = new ArrayList<>();
-
-    if (map.getType("identifier") == ReadableType.String) {
-      String id = map.getString("identifier");
-      if (id != null) {
-        identifier = id;
-      }
+  static WritableMap regionToMap(Region region) {
+    WritableMap map;
+    map = new WritableNativeMap();
+    
+    map.putString("identifier", region.getUniqueId());
+    if (region.getId1() != null) {
+      map.putString("uuid", region.getId1().toString().toUpperCase());
+    }
+    if (region.getId2() != null) {
+      map.putInt("major", region.getId2().toInt());
+    }
+    if (region.getId3() != null) {
+      map.putInt("minor", region.getId3().toInt());
     }
 
-    if (map.hasKey("uuid") && map.getType("uuid") == ReadableType.String) {
-      String uuid = map.getString("uuid");
-      if (uuid != null) {
-        identifiers.add(Identifier.parse(uuid));
-      }
-    }
-
-    if (map.hasKey("major") && map.getType("major") == ReadableType.Number) {
-      identifiers.add(Identifier.fromInt(map.getInt("major")));
-    }
-
-    if (map.hasKey("minor") && map.getType("minor") == ReadableType.Number) {
-      identifiers.add(Identifier.fromInt(map.getInt("minor")));
-    }
-
-    return new Region(identifier, identifiers);
+    return map;
   }
 
 };
