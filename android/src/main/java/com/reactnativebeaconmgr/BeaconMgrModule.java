@@ -57,6 +57,12 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
             .emit(eventName, array);
     }
 
+    private void sendEvent(String eventName, @Nullable String string) {
+        getReactApplicationContext()
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, string);
+    }
+
    
     // Example method
     // See https://reactnative.dev/docs/native-modules-android
@@ -80,24 +86,5 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
         Beacon.setHardwareEqualityEnforced(e.booleanValue());
     }
 
-    //  @Override
-    // public void onBeaconServiceConnect() {
-
-    //     RangeNotifier rangeNotifier = new RangeNotifier() {
-    //        @Override
-    //        public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-    //         if (beacons.size() > 0) {
-    //             Log.d(NAME, "rangingConsumer didRangeBeaconsInRegion, beacons: " + beacons.toString());
-    //             Log.d(NAME, "rangingConsumer didRangeBeaconsInRegion, region: " + region.toString());
-    //             sendEvent(mReactContext, "beaconsDidRange", createRangingResponse(beacons, region));
-    //         }
-    //        }
-
-    //     };
-    //     try {
-    //         mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
-    //         mBeaconManager.addRangeNotifier(rangeNotifier);
-    //     } catch (RemoteException e) {   }
-    // }
-
+    
 }
