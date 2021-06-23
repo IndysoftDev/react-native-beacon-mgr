@@ -66,7 +66,7 @@ class BeaconUtils {
     return map;
   }
 
-  static Region regionFromMap(ReadableMap map) {
+  static Region regionToMap(ReadableMap map) {
     String identifier = "";
     List<Identifier> identifiers = new ArrayList<>();
 
