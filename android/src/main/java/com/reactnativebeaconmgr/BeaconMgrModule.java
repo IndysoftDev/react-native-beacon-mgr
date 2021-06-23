@@ -42,6 +42,9 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
     private final List<Region> regionMonitoring;
     private final BeaconManager mBeaconManager;
 
+    //EVENT CONSTANTS
+    private static final String ON_BEACON_SERVICE_CONNECT = "onBeaconServiceConnect";
+
     @Override
     @NonNull
     public String getName() {
@@ -77,6 +80,30 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
     }
 
     public static native int nativeMultiply(int a, int b);
+
+    private final BeaconConsumer beaconConsumer = new BeaconConsumer() {
+
+        @Override
+        public void onBeaconServiceConnect() {
+            sendEvent(ON_BEACON_SERVICE_CONNECT, null);
+        }
+
+        @Override
+        public Context getApplicationContext() {
+            return reactContext.getApplicationContext();
+        }
+
+        @Override
+        public void unbindService(ServiceConnection serviceConnection) {
+            mReactContext.unbindService(serviceConnection);
+        }
+
+        @Override
+        public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i) {
+            return mReactContext.bindService(intent, serviceConnection, i);
+        }
+
+    };
 
     
 }
