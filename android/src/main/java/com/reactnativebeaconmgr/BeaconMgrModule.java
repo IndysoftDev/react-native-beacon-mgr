@@ -73,18 +73,5 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
 
     public static native int nativeMultiply(int a, int b);
 
-    @Override
-    public void initialize() {
-        this.mApplicationContext = this.mReactContext.getApplicationContext();
-        this.mBeaconManager = BeaconManager.getInstanceForApplication(mApplicationContext);
-        // need to bind at instantiation so that service loads (to test more)
-        mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
-    }
-
-    @ReactMethod
-    public void setHardwareEqualityEnforced(Boolean e) {
-        Beacon.setHardwareEqualityEnforced(e.booleanValue());
-    }
-
     
 }
