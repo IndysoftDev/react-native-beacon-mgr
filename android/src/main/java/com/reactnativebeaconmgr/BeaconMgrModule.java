@@ -8,6 +8,8 @@ import androidx.annotation.Nullable;
 import android.os.RemoteException;
 
 import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -35,22 +37,27 @@ import org.altbeacon.beacon.service.RunningAverageRssiFilter;
 @ReactModule(name = BeaconMgrModule.NAME)
 public class BeaconMgrModule extends ReactContextBaseJavaModule {
     public static final String NAME = "BeaconMgr";
-    private BeaconManager mBeaconManager;
-    private Context mApplicationContext;
-    private ReactApplicationContext mReactContext;
-
-    public BeaconMgrModule(ReactApplicationContext reactContext) {
-        super(reactContext);
-        Log.d(NAME, "BeaconsAndroidModule - started");
-        this.mReactContext = reactContext;
-    }
+    private final ReactApplicationContext mReactContext;
+    private final List<Region> regionRanging;
+    private final List<Region> regionMonitoring;
+    private final BeaconManager mBeaconManager;
 
     @Override
     @NonNull
     public String getName() {
         return NAME;
-    }     
+    }    
 
+    public BeaconMgrModule(ReactApplicationContext reactContext) {
+        super(reactContext);
+        Log.d(NAME, "BeaconMgrModule - started");
+        this.mReactContext = reactContext;
+        this.regionRanging = new ArrayList<>();
+        this.regionMonitoring = new ArrayList<>();
+        this.mBeaconManager = BeaconManager.getInstanceForApplication(reactContext);
+    }
+
+    //SEND EVENT FUNCS
     private void sendEvent(String eventName, @Nullable WritableArray array) {
         getReactApplicationContext()
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
@@ -63,9 +70,7 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
             .emit(eventName, string);
     }
 
-   
-    // Example method
-    // See https://reactnative.dev/docs/native-modules-android
+    //EXAMPLE METHOD, DELETE AFTER DEV
     @ReactMethod
     public void multiply(int a, int b, Promise promise) {
         promise.resolve(a * b);
