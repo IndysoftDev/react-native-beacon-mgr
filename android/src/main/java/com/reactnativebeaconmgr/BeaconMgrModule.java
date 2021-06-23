@@ -50,6 +50,8 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
     private static final String ON_BEACON_SERVICE_CONNECT = "onBeaconServiceConnect";
     private static final String DID_RANGE_BEACONS = "didRangeBeacons";
 
+    private static final BeaconParser IBEACON = new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
+
     @Override
     @NonNull
     public String getName() {
@@ -113,6 +115,21 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
             sendEvent(DID_RANGE_BEACONS, map);
         }
     };
+
+    @ReactMethod
+    public void initialize() {
+        if (!mBeaconManager.getBeaconParsers().contains(IBEACON)) {
+            mBeaconManager.getBeaconParsers().clear();
+            mBeaconManager.getBeaconParsers().add(IBEACON);
+        }
+
+        if (!mBeaconManager.isBound(beaconConsumer)) {
+            this.mBeaconManager.bind(beaconConsumer);
+        }
+
+        mBeaconManager.removeAllRangeNotifiers();
+        mBeaconManager.addRangeNotifier(rangeNotifier);
+    }
 
     
 }
