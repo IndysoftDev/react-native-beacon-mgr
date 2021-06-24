@@ -1,6 +1,12 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text, DeviceEventEmitter } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  DeviceEventEmitter,
+  PermissionsAndroid,
+} from 'react-native';
 import BeaconMgr from 'react-native-beacon-mgr';
 
 export default function App() {
@@ -17,17 +23,25 @@ export default function App() {
   };
 
   React.useEffect(() => {
+    (async () => {
+      try {
+        await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+        ]);
+      } catch (err) {
+        console.warn(err);
+      }
+    })();
+  }, []);
+
+  React.useEffect(() => {
     BeaconMgr.setup();
     BeaconMgr.addEstimotes(onSuccess, onFail);
   }, []);
 
   React.useEffect(() => {
-    BeaconMgr.startRanging(
-      'REGION1',
-      '42a0e5cc-12bf-4ae9-be4e-2dbea495fc9b',
-      onSuccess,
-      onFail
-    );
+    BeaconMgr.startRanging('REGION1', onSuccess, onFail);
 
     DeviceEventEmitter.addListener('beaconsDidRange', (data) => {
       console.log('Found beacons!', data);
