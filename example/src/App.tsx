@@ -28,11 +28,11 @@ export default function App() {
       onSuccess,
       onFail
     );
-  }, []);
 
-  DeviceEventEmitter.addListener('beaconsDidRange', (data) => {
-    console.log('Found beacons!', data.beacons);
-  });
+    DeviceEventEmitter.addListener('beaconsDidRange', (data) => {
+      console.log('Found beacons!', data);
+    });
+  }, []);
 
   return (
     <View style={styles.container}>
