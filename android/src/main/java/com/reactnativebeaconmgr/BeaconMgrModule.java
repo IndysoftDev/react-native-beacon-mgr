@@ -19,6 +19,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.module.annotations.ReactModule;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -51,12 +52,12 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
         this.mReactContext = reactContext;
     }
 
-    @Override
+    @ReactMethod
     public void setup() {
         this.mApplicationContext = this.mReactContext.getApplicationContext();
         this.mBeaconManager = BeaconManager.getInstanceForApplication(mApplicationContext);
         mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
-        mBeaconManager.bind(this);
+        mBeaconManager.bind(beaconConsumer);
     }
 
     @Override
@@ -84,16 +85,16 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
     }
 
     public void bindManager() {
-        if (!mBeaconManager.isBound(this)) {
+        if (!mBeaconManager.isBound(beaconConsumer)) {
             Log.d(NAME, "BeaconMgrModule - bindManager: ");
-            mBeaconManager.bind(this);
+            mBeaconManager.bind(beaconConsumer);
         }
     }
 
     public void unbindManager() {
-        if (mBeaconManager.isBound(this)) {
+        if (mBeaconManager.isBound(beaconConsumer)) {
             Log.d(NAME, "BeaconMgrModule - unbindManager: ");
-            mBeaconManager.unbind(this);
+            mBeaconManager.unbind(beaconConsumer);
         }
     }
 
