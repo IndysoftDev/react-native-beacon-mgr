@@ -203,6 +203,7 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
     private final BeaconConsumer beaconConsumer = new BeaconConsumer() {
         @Override
         public void onBeaconServiceConnect() {
+            mBeaconManager.addRangeNotifier(mRangeNotifier);
             sendEvent("onBeaconServiceConnect", null);
         }
 
@@ -383,26 +384,24 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
   /***********************************************************************************************
    * Utils
    **********************************************************************************************/
-  private void sendEvent(String eventName, @Nullable WritableMap params) {
-      if (mReactContext.hasActiveCatalystInstance()) {
-        mReactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
-      }
-  }
+    private void sendEvent(String eventName, @Nullable WritableMap params) {
+        getReactApplicationContext()
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, params);
+    }
 
-  private Region createRegion(String regionId, String beaconUuid) {
-      Identifier id1 = (beaconUuid == null) ? null : Identifier.parse(beaconUuid);
-      return new Region(regionId, id1, null, null);
-  }
+    private Region createRegion(String regionId, String beaconUuid) {
+        Identifier id1 = (beaconUuid == null) ? null : Identifier.parse(beaconUuid);
+        return new Region(regionId, id1, null, null);
+    }
 
-  private Region createRegion(String regionId, String beaconUuid, String minor, String major) {
-      Identifier id1 = (beaconUuid == null) ? null : Identifier.parse(beaconUuid);
-      return new Region(
+    private Region createRegion(String regionId, String beaconUuid, String minor, String major) {
+        Identifier id1 = (beaconUuid == null) ? null : Identifier.parse(beaconUuid);
+        return new Region(
         regionId,
         id1,
         major.length() > 0 ? Identifier.parse(major) : null,
         minor.length() > 0 ? Identifier.parse(minor) : null
-      );
-  }
+        );
+    }
 }
