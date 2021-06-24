@@ -1,7 +1,8 @@
 import { NativeModules } from 'react-native';
 
 type BeaconMgrType = {
-  multiply(a: number, b: number): Promise<number>;
+  setup(): void;
+  //multiply(a: number, b: number): Promise<number>;
 };
 
 const { BeaconMgr } = NativeModules;
