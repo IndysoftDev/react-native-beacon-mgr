@@ -4,10 +4,10 @@ import { StyleSheet, View, Text } from 'react-native';
 import BeaconMgr from 'react-native-beacon-mgr';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const [result] = React.useState<number | undefined>();
 
   React.useEffect(() => {
-    BeaconMgr.multiply(3, 7).then(setResult);
+    BeaconMgr.setup();
   }, []);
 
   return (
