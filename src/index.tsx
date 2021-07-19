@@ -18,18 +18,18 @@ type setupFn = () => void;
 
 type startRangingFn = (
   region: BeaconRegion | string,
-  beaconsUUID: string,
   resolve: () => any,
-  reject: () => any
+  reject: () => any,
+  beaconsUUID?: string
 ) => void;
 
 const setup: setupFn = () => BeaconMgr.setup();
 
 const startRanging: startRangingFn = (
   region: BeaconRegion | string,
-  beaconsUUID: string,
   resolve: () => any,
-  reject: () => any
+  reject: () => any,
+  beaconsUUID?: string
 ) => BeaconMgr.startRanging(region, beaconsUUID, resolve, reject);
 
 const IBEACON: string = 'm:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24';
