@@ -9,6 +9,7 @@ import android.util.Log;
 import android.os.RemoteException;
 
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -224,26 +225,25 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
         }
     };
 
-  /***********************************************************************************************
-   * Monitoring
-   **********************************************************************************************/
-  @ReactMethod
-  public void startMonitoring(String regionId, String beaconUuid, int minor, int major, Callback resolve, Callback reject) {
-      Log.d(NAME, "startMonitoring, monitoringRegionId: " + regionId + ", monitoringBeaconUuid: " + beaconUuid + ", minor: " + minor + ", major: " + major);
-      try {
-          Region region = createRegion(
+    /***********************************************************************************************
+    * Monitoring
+    **********************************************************************************************/
+    @ReactMethod
+    public void startMonitoring(String regionId, String beaconUuid, int minor, int major, final Promise promise) {
+        Log.d(NAME, "startMonitoring, monitoringRegionId: " + regionId + ", monitoringBeaconUuid: " + beaconUuid + ", minor: " + minor + ", major: " + major);
+        try {
+            Region region = createRegion(
             regionId,
             beaconUuid,
             String.valueOf(minor).equals("-1") ? "" : String.valueOf(minor),
             String.valueOf(major).equals("-1") ? "" : String.valueOf(major)
-          );
-          mBeaconManager.startMonitoringBeaconsInRegion(region);
-          resolve.invoke();
-      } catch (Exception e) {
-          Log.e(NAME, "startMonitoring, error: ", e);
-          reject.invoke(e.getMessage());
-      }
-  }
+            );
+            mBeaconManager.startMonitoringBeaconsInRegion(region);
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject("MONITORING_ERROR", e.getLocalizedMessage()); 
+        }
+    }
 
   private MonitorNotifier mMonitorNotifier = new MonitorNotifier() {
       @Override
@@ -284,31 +284,28 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
       return map;
   }
 
-  @ReactMethod
-  public void stopMonitoring(String regionId, String beaconUuid, int minor, int major, Callback resolve, Callback reject) {
-      Region region = createRegion(
+    @ReactMethod
+    public void stopMonitoring(String regionId, String beaconUuid, int minor, int major, final Promise promise) {
+        Region region = createRegion(
         regionId,
         beaconUuid,
         String.valueOf(minor).equals("-1") ? "" : String.valueOf(minor),
         String.valueOf(major).equals("-1") ? "" : String.valueOf(major)
-        // minor,
-        // major
-      );
+        );
 
-      try {
-          mBeaconManager.stopMonitoringBeaconsInRegion(region);
-          resolve.invoke();
-      } catch (Exception e) {
-          Log.e(NAME, "stopMonitoring, error: ", e);
-          reject.invoke(e.getMessage());
-      }
-  }
+        try {
+            mBeaconManager.stopMonitoringBeaconsInRegion(region);
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject("MONITORING_ERROR", e.getLocalizedMessage()); 
+        }
+    }
 
   /***********************************************************************************************
    * Ranging
    **********************************************************************************************/
   @ReactMethod
-  public void startRanging(String regionId, String beaconUuid, int minor, int major, Callback resolve, Callback reject) {
+  public void startRanging(String regionId, String beaconUuid, int minor, int major, final Promise promise) {
       Log.d(NAME, "startRanging, rangingRegionId: " + regionId + ", rangingBeaconUuid: " + beaconUuid);
       try {
           Region region = createRegion(
@@ -319,10 +316,9 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
           );
 
           mBeaconManager.startRangingBeaconsInRegion(region);
-          resolve.invoke();
+          promise.resolve(true);
       } catch (Exception e) {
-          Log.e(NAME, "startRanging, error: ", e);
-          reject.invoke(e.getMessage());
+          promise.reject("RANGING_ERROR", e.getLocalizedMessage());
       }
   }
 
@@ -365,7 +361,7 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
   }
 
     @ReactMethod
-    public void stopRanging(String regionId, String beaconUuid, int minor, int major,  Callback resolve, Callback reject) {
+    public void stopRanging(String regionId, String beaconUuid, int minor, int major, final Promise promise) {
         Region region = createRegion(
             regionId,
             beaconUuid,
@@ -374,10 +370,9 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
         );
         try {
             mBeaconManager.stopRangingBeaconsInRegion(region);
-            resolve.invoke();
+            promise.resolve(true);
         } catch (Exception e) {
-            Log.e(NAME, "stopRanging, error: ", e);
-            reject.invoke(e.getMessage());
+            promise.reject("RANGING_ERROR", e.getLocalizedMessage());
         }
     }
 
