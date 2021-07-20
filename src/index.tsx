@@ -16,15 +16,25 @@ type BeaconRegion = {
   accuracy?: number; // iOS
 };
 
+//Setup
 type setupFn = () => void;
 
-type startRangingFn = (
-  region: BeaconRegion | string,
-  resolve: () => any,
-  reject: () => any,
-  beaconsUUID?: string
-) => void;
+const setup: setupFn = () => BeaconMgr.setup();
 
+//Beacon Parsers
+const IBEACON: string = 'm:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24';
+const ESTIMOTE: string = 'm:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24';
+// const ALTBEACON: string = 'm:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25';
+
+type addParser = (resolve: () => any, reject: () => any) => void;
+
+const addEstimotes: addParser = (resolve: () => any, reject: () => any) =>
+  BeaconMgr.addParser(ESTIMOTE, resolve, reject);
+
+const addIBeacon: addParser = (resolve: () => any, reject: () => any) =>
+  BeaconMgr.addParser(IBEACON, resolve, reject);
+
+// Ranging and Monitoring Listeners
 type addListener = (cb: (args: any[]) => void) => void;
 
 type removeListener = (cb: (args: any[]) => void) => void;
@@ -41,7 +51,13 @@ const addMonitoringListener: addListener = (listener) =>
 const removeMonitoringListener: removeListener = (listener) =>
   evtEmitter.removeListener('didDetermineState', listener);
 
-const setup: setupFn = () => BeaconMgr.setup();
+//Start Ranging
+type startRangingFn = (
+  region: BeaconRegion | string,
+  resolve: () => any,
+  reject: () => any,
+  beaconsUUID?: string
+) => void;
 
 const startRanging: startRangingFn = (
   region: BeaconRegion | string,
@@ -49,18 +65,6 @@ const startRanging: startRangingFn = (
   reject: () => any,
   beaconsUUID?: string
 ) => BeaconMgr.startRanging(region, beaconsUUID, resolve, reject);
-
-const IBEACON: string = 'm:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24';
-const ESTIMOTE: string = 'm:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24';
-// const ALTBEACON: string = 'm:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25';
-
-type addParser = (resolve: () => any, reject: () => any) => void;
-
-const addEstimotes: addParser = (resolve: () => any, reject: () => any) =>
-  BeaconMgr.addParser(ESTIMOTE, resolve, reject);
-
-const addIBeacon: addParser = (resolve: () => any, reject: () => any) =>
-  BeaconMgr.addParser(IBEACON, resolve, reject);
 
 export default {
   setup,
