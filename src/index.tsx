@@ -1,6 +1,8 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 
 const { BeaconMgr } = NativeModules;
+
+const evtEmitter = new NativeEventEmitter(BeaconMgr);
 
 type BeaconRegion = {
   identifier: string;
@@ -22,6 +24,16 @@ type startRangingFn = (
   reject: () => any,
   beaconsUUID?: string
 ) => void;
+
+type addListener = (cb: (args: any[]) => void) => void;
+
+type removeListener = (cb: (args: any[]) => void) => void;
+
+const addRangingListener: addListener = (listener) =>
+  evtEmitter.addListener('beaconsDidRange', listener);
+
+const removeRangingListener: removeListener = (listener) =>
+  evtEmitter.removeListener('beaconsDidRange', listener);
 
 const setup: setupFn = () => BeaconMgr.setup();
 
@@ -49,4 +61,6 @@ export default {
   startRanging,
   addEstimotes,
   addIBeacon,
+  addRangingListener,
+  removeRangingListener,
 };
