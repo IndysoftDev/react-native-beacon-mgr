@@ -35,11 +35,15 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    BeaconMgr.startRanging('REGION1', onSuccess, onFail);
-
     BeaconMgr.addRangingListener((data) => console.log('Found beacons!', data));
 
     return () => BeaconMgr.removeRangingListener(() => console.log('Removed'));
+  }, []);
+
+  React.useEffect(() => {
+    (async () => {
+      await BeaconMgr.startRanging('REGION1', '', -1, -1);
+    })();
   }, []);
 
   return (
