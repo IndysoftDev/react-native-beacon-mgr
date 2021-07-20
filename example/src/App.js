@@ -3,8 +3,19 @@ import * as React from 'react';
 import { StyleSheet, View, Text, PermissionsAndroid } from 'react-native';
 import BeaconMgr from 'react-native-beacon-mgr';
 
+const regions = [
+  {
+    name: 'TEST1',
+    beacons: [
+      { description: 'Sams Office', uuid: '', major: '', minor: '' },
+      { description: 'Conference Room', uuid: '', major: '', minor: '' },
+    ],
+  },
+];
+
 export default function App() {
-  const [result] = React.useState<number | undefined>();
+  const [closest, setClosest] = React.useState();
+  const distanceRef = React.useRef(null);
 
   const onSuccess = () => {
     console.log('add');
@@ -35,7 +46,15 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    BeaconMgr.addRangingListener((data) => console.log('Found beacons!', data));
+    BeaconMgr.addRangingListener((data) => {
+      if (
+        !distanceRef.current ||
+        data?.closest?.distance < distanceRef.current
+      ) {
+        distanceRef.current = data.closest.distance;
+        setClosest(data.closest);
+      }
+    });
 
     return () => BeaconMgr.removeRangingListener(() => console.log('Removed'));
   }, []);
@@ -45,15 +64,21 @@ export default function App() {
       await BeaconMgr.startRanging(
         'REGION1',
         'B9407F30-F5F8-466E-AFF9-25556B57FE6D',
-        56640,
-        34612
+        -1,
+        -1
       );
     })();
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      {closest && (
+        <Text>Result: {`major: ${closest.major} minor: ${closest.minor}`}</Text>
+      )}
+      <Text>
+        Distance:
+        {distanceRef.current}
+      </Text>
     </View>
   );
 }
