@@ -308,10 +308,16 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
    * Ranging
    **********************************************************************************************/
   @ReactMethod
-  public void startRanging(String regionId, String beaconUuid, Callback resolve, Callback reject) {
+  public void startRanging(String regionId, String beaconUuid, int minor, int major, Callback resolve, Callback reject) {
       Log.d(NAME, "startRanging, rangingRegionId: " + regionId + ", rangingBeaconUuid: " + beaconUuid);
       try {
-          Region region = createRegion(regionId, beaconUuid);
+          Region region = createRegion(
+            regionId,
+            beaconUuid,
+            String.valueOf(minor).equals("-1") ? "" : String.valueOf(minor),
+            String.valueOf(major).equals("-1") ? "" : String.valueOf(major)
+          );
+
           mBeaconManager.startRangingBeaconsInRegion(region);
           resolve.invoke();
       } catch (Exception e) {
@@ -358,17 +364,22 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
       return map;
   }
 
-  @ReactMethod
-  public void stopRanging(String regionId, String beaconUuid, Callback resolve, Callback reject) {
-      Region region = createRegion(regionId, beaconUuid);
-      try {
-          mBeaconManager.stopRangingBeaconsInRegion(region);
-          resolve.invoke();
-      } catch (Exception e) {
-          Log.e(NAME, "stopRanging, error: ", e);
-          reject.invoke(e.getMessage());
-      }
-  }
+    @ReactMethod
+    public void stopRanging(String regionId, String beaconUuid, int minor, int major,  Callback resolve, Callback reject) {
+        Region region = createRegion(
+            regionId,
+            beaconUuid,
+            String.valueOf(minor).equals("-1") ? "" : String.valueOf(minor),
+            String.valueOf(major).equals("-1") ? "" : String.valueOf(major)
+        );
+        try {
+            mBeaconManager.stopRangingBeaconsInRegion(region);
+            resolve.invoke();
+        } catch (Exception e) {
+            Log.e(NAME, "stopRanging, error: ", e);
+            reject.invoke(e.getMessage());
+        }
+    }
 
   @ReactMethod
   public void requestStateForRegion(String regionId, String beaconUuid, int minor, int major) {
