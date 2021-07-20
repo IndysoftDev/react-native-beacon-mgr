@@ -4,18 +4,6 @@ const { BeaconMgr } = NativeModules;
 
 const evtEmitter = new NativeEventEmitter(BeaconMgr);
 
-type BeaconRegion = {
-  identifier: string;
-  uuid: string;
-  minor?: number;
-  major?: number;
-  proximity?: string;
-  rssi?: number;
-  // distance:
-  distance?: number; // android
-  accuracy?: number; // iOS
-};
-
 //Setup
 type setupFn = () => void;
 
@@ -51,24 +39,48 @@ const addMonitoringListener: addListener = (listener) =>
 const removeMonitoringListener: removeListener = (listener) =>
   evtEmitter.removeListener('didDetermineState', listener);
 
-//Start Ranging
-type startRangingFn = (
-  region: BeaconRegion | string,
-  resolve: () => any,
-  reject: () => any,
-  beaconsUUID?: string
-) => void;
+//Start/Stop Ranging and Montoring Funcs
+type startStopFn = (
+  identifier: string,
+  uuid?: string,
+  minor?: number,
+  major?: number
+) => Promise<any>;
 
-const startRanging: startRangingFn = (
-  region: BeaconRegion | string,
-  resolve: () => any,
-  reject: () => any,
-  beaconsUUID?: string
-) => BeaconMgr.startRanging(region, beaconsUUID, resolve, reject);
+const startRanging: startStopFn = (
+  identifier: string,
+  uuid?: string,
+  minor?: number,
+  major?: number
+) => BeaconMgr.startRanging(identifier, uuid, minor, major);
+
+const stopRanging: startStopFn = (
+  identifier: string,
+  uuid?: string,
+  minor?: number,
+  major?: number
+) => BeaconMgr.stopRanging(identifier, uuid, minor, major);
+
+const startMonitoring: startStopFn = (
+  identifier: string,
+  uuid?: string,
+  minor?: number,
+  major?: number
+) => BeaconMgr.startMonitoring(identifier, uuid, minor, major);
+
+const stopMonitoring: startStopFn = (
+  identifier: string,
+  uuid?: string,
+  minor?: number,
+  major?: number
+) => BeaconMgr.stopMonitoring(identifier, uuid, minor, major);
 
 export default {
   setup,
   startRanging,
+  stopRanging,
+  startMonitoring,
+  stopMonitoring,
   addEstimotes,
   addIBeacon,
   addRangingListener,
