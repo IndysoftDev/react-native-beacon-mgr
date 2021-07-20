@@ -31,7 +31,7 @@ export default function App() {
 
   React.useEffect(() => {
     BeaconMgr.setup();
-    BeaconMgr.addEstimotes(onSuccess, onFail);
+    BeaconMgr.addIBeacon(onSuccess, onFail);
   }, []);
 
   React.useEffect(() => {
@@ -42,7 +42,12 @@ export default function App() {
 
   React.useEffect(() => {
     (async () => {
-      await BeaconMgr.startRanging('REGION1', '', -1, -1);
+      await BeaconMgr.startRanging(
+        'REGION1',
+        'B9407F30-F5F8-466E-AFF9-25556B57FE6D',
+        56640,
+        34612
+      );
     })();
   }, []);
 
