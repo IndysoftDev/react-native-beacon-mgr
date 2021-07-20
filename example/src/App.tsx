@@ -1,12 +1,6 @@
 import * as React from 'react';
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  DeviceEventEmitter,
-  PermissionsAndroid,
-} from 'react-native';
+import { StyleSheet, View, Text, PermissionsAndroid } from 'react-native';
 import BeaconMgr from 'react-native-beacon-mgr';
 
 export default function App() {
@@ -43,9 +37,9 @@ export default function App() {
   React.useEffect(() => {
     BeaconMgr.startRanging('REGION1', onSuccess, onFail);
 
-    DeviceEventEmitter.addListener('beaconsDidRange', (data) => {
-      console.log('Found beacons!', data);
-    });
+    BeaconMgr.addRangingListener((data) => console.log('Found beacons!', data));
+
+    return () => BeaconMgr.removeRangingListener(() => console.log('Removed'));
   }, []);
 
   return (
