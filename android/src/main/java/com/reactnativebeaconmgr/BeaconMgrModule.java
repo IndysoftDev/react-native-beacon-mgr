@@ -204,6 +204,7 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
         @Override
         public void onBeaconServiceConnect() {
             mBeaconManager.addRangeNotifier(mRangeNotifier);
+            mBeaconManager.addMonitorNotifier(mMonitorNotifier);
             sendEvent("onBeaconServiceConnect", null);
         }
 
