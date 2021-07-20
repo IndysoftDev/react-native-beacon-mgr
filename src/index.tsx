@@ -35,6 +35,12 @@ const addRangingListener: addListener = (listener) =>
 const removeRangingListener: removeListener = (listener) =>
   evtEmitter.removeListener('beaconsDidRange', listener);
 
+const addMonitoringListener: addListener = (listener) =>
+  evtEmitter.addListener('didDetermineState', listener);
+
+const removeMonitoringListener: removeListener = (listener) =>
+  evtEmitter.removeListener('didDetermineState', listener);
+
 const setup: setupFn = () => BeaconMgr.setup();
 
 const startRanging: startRangingFn = (
@@ -63,4 +69,6 @@ export default {
   addIBeacon,
   addRangingListener,
   removeRangingListener,
+  addMonitoringListener,
+  removeMonitoringListener,
 };
