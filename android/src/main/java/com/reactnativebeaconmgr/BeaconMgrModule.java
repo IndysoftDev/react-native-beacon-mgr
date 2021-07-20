@@ -332,33 +332,43 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
       }
   };
 
-  private WritableMap createRangingResponse(Collection<Beacon> beacons, Region region) {
-      WritableMap map = Arguments.createMap();
-      map.putString("identifier", region.getUniqueId());
-      WritableArray a = new WritableNativeArray();
-      for (Beacon beacon : beacons) {
-          WritableMap b = new WritableNativeMap();
-          b.putString("uuid", beacon.getId1().toString());
-          if (beacon.getIdentifiers().size() > 2) {
-              b.putInt("major", beacon.getId2().toInt());
-              b.putInt("minor", beacon.getId3().toInt());
-          }
-          b.putInt("rssi", beacon.getRssi());
-          if(beacon.getDistance() == Double.POSITIVE_INFINITY
-                    || Double.isNaN(beacon.getDistance())
-                    || beacon.getDistance() == Double.NaN
-                    || beacon.getDistance() == Double.NEGATIVE_INFINITY){
-                b.putDouble("distance", 999.0);
-                b.putString("proximity", "far");
-            }else {
-                b.putDouble("distance", beacon.getDistance());
-                b.putString("proximity", BeaconUtils.distanceToProximity(beacon.getRssi(), beacon.getDistance()));
+    private WritableMap createRangingResponse(Collection<Beacon> beacons, Region region) {
+        WritableMap map = Arguments.createMap();
+        map.putString("identifier", region.getUniqueId());
+        WritableArray a = new WritableNativeArray();
+        for (Beacon beacon : beacons) {
+            WritableMap b = createBeacon(beacon);
+            if(map.getMap("closest") == null || b.getDouble("distance") < map.getMap("closest").getDouble("distance") ) {
+                map.putMap("closest", createBeacon(beacon));
             }
-          a.pushMap(b);
-      }
-      map.putArray("beacons", a);
-      return map;
-  }
+            a.pushMap(createBeacon(beacon));
+        }
+        map.putArray("beacons", a);
+        return map;
+    }
+
+    private WritableMap createBeacon(Beacon beacon) {
+
+        WritableMap b = new WritableNativeMap();
+        b.putString("uuid", beacon.getId1().toString());
+        if (beacon.getIdentifiers().size() > 2) {
+            b.putInt("major", beacon.getId2().toInt());
+            b.putInt("minor", beacon.getId3().toInt());
+        }
+        b.putInt("rssi", beacon.getRssi());
+        if(beacon.getDistance() == Double.POSITIVE_INFINITY
+            || Double.isNaN(beacon.getDistance())
+            || beacon.getDistance() == Double.NaN
+            || beacon.getDistance() == Double.NEGATIVE_INFINITY){
+            b.putDouble("distance", 999.0);
+            b.putString("proximity", "far");
+        }else {
+            b.putDouble("distance", beacon.getDistance());
+            b.putString("proximity", BeaconUtils.distanceToProximity(beacon.getRssi(), beacon.getDistance()));
+        }
+        return b;
+
+    }
 
     @ReactMethod
     public void stopRanging(String regionId, String beaconUuid, int minor, int major, final Promise promise) {
