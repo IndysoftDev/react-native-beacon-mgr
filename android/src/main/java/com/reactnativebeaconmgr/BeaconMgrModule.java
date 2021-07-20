@@ -17,6 +17,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -332,9 +333,8 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
   };
 
   private WritableMap createRangingResponse(Collection<Beacon> beacons, Region region) {
-      WritableMap map = new WritableNativeMap();
+      WritableMap map = Arguments.createMap();
       map.putString("identifier", region.getUniqueId());
-      map.putString("uuid", region.getId1() != null ? region.getId1().toString() : "");
       WritableArray a = new WritableNativeArray();
       for (Beacon beacon : beacons) {
           WritableMap b = new WritableNativeMap();
@@ -356,7 +356,7 @@ public class BeaconMgrModule extends ReactContextBaseJavaModule {
             }
           a.pushMap(b);
       }
-      map.putString("beacons", a.toString());
+      map.putArray("beacons", a);
       return map;
   }
 
